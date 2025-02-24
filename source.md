@@ -175,4 +175,206 @@ DELETE FROM students
     WHERE name='Raju';
 
 
+## DataTypes
+
+An attribute that specifies the type of data in a column of our database - table.
+
+# Most widely used are
+
+- Numeric - INT DOUBLE FLOAT DECIMAL
+- String - VARCHAR
+- Date - DATE
+- Boolean - BOOLEAN
+
+
+DECIMAL(5, 2)
+
+5 - Total digit
+2 - Digits after decimal
+
+Example: 155.38, 28.15
+
+
+## Constraint
+
+A Constraint in PostgreSQL is a rule applied to a column.
+
+
+# Primary Key
+
+- The PRIMARY KEY constraint uniquely identifies each record in a table.
+
+- Primary keys must contain UNIQUE values, and cannot contain NULL values.
+
+- A table can have only ONE primary key.
+
+
+# NOT NULL
+
+CREATE TABLE customers
+(
+    id INT NOT NULL,
+    name VARCHAR(100) NOT NULL
+);
+
+
+# DEFAULT Value
+
+CREATE TABLE customers
+(
+    acc_no INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    acc_type VARCHAR(50) NOT NULL DEFAULT 'Savings'
+);
+
+
+# AUTO_INCREMENT
+
+CREATE TABLE employees (
+    id SERIAL PRIMARY KEY,
+    firstname VARCHAR(50),
+    lastname VARCHAR(50)
+);
+
+
+## Task: Creating New Table
+
+CREATE TABLE employees (
+    emp_id SERIAL PRIMARY KEY,
+    fname VARCHAR(50) NOT NULL,
+    lname VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    dept VARCHAR(50),
+    salary DECIMAL(10, 2) DEFAULT 30000.00,
+    hire_date DATE NOT NULL DEFAULT CURRENT_DATE
+);
+
+
+SELECT setval('employees_emp_id_seq', 1);
+
+SELECT currval('employees_emp_id_seq');
+
+
+## Data Refining
+
+## Clauses
+
+# WHERE
+
+SELECT * FROM employees
+WHERE emp_id = 5;
+
+SELECT * FROM employess
+WHERE dept = 'IT' AND salary > 50000;
+
+SELECT * FROM employess
+WHERE dept = 'IT' OR salary > 50000;
+
+
+# Relational Operators
+
+<
+>
+<=
+>=
+=
+!=
+
+
+# Logical Operators
+
+AND
+OR
+
+
+# IN Operator
+
+SELECT * FROM employees
+WHERE dept IN ('IT', 'Finance', 'HR');
+
+# NOT IN Operator
+
+SELECT * FROM employees
+WHERE dept NOT IN ('IT', 'Finance', 'HR');
+
+# BETWEEN Operator (Both are inclusive)
+
+SELECT * FROM employees
+WHERE salary BETWEEN 50000 AND 60000;
+
+
+# DISTINCT
+
+SELECT DISINCT dept FROM employees;
+
+
+# ORDER BY (Ascending)
+
+SELECT * FROM employees ORDER BY fname;
+
+SELECT * FROM employees ORDER BY fname DESC;
+
+
+# LIMIT
+
+SELECT * FROM employees LIMIT 3;
+
+
+# LIKE (case-sensitive)
+
+SELECT * FROM employees
+WHERE fname LIKE 'A%';
+
+SELECT * FROM employees
+WHERE fname LIKE '%a';
+
+
+- Starts with 'A': LIKE 'A%'
+- Ends with 'A': LIKE '%A'
+- Contains 'A': LIKE '%A%'
+- Second character is 'A': LIKE '_A%'
+- Case-insensitive contains 'john': ILIKE '%john%'
+
+
+SELECT * FROM employees
+WHERE dept LIKE '__';
+
+
+## Aggregate functions
+
+# COUNT
+
+SELECT COUNT(emp_id) FROM employees;
+
+
+# SUM
+
+SELECT SUM(salary) FROM employees;
+
+
+# AVG
+
+SELECT AVG(salary) FROM employees;
+
+
+# MIN
+
+SELECT MIN(salary) FROM employees;
+
+
+# MAX
+
+SELECT MAX(salary) FROM employees;
+
+
+## GROUP BY
+
+- Number of employees in each department:
+
+SELECT dept FROM employees
+GROUP BY dept;
+
+SELECT dept, COUNT(fname) FROM employees
+GROUP BY dept;
+
 
