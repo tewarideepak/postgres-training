@@ -264,10 +264,10 @@ SELECT currval('employees_emp_id_seq');
 SELECT * FROM employees
 WHERE emp_id = 5;
 
-SELECT * FROM employess
+SELECT * FROM employees
 WHERE dept = 'IT' AND salary > 50000;
 
-SELECT * FROM employess
+SELECT * FROM employees
 WHERE dept = 'IT' OR salary > 50000;
 
 
@@ -378,3 +378,207 @@ SELECT dept, COUNT(fname) FROM employees
 GROUP BY dept;
 
 
+## String Functions
+
+# CONCAT
+
+CONCAT(first_col, sec_col)
+CONCAT(first_word, sec_word, ...)
+
+SELECT CONCAT('Hello', 'World');
+
+SELECT CONCAT(fname, lname) AS Fullname
+FROM employees;
+
+
+# CONCAT_WS
+
+CONCAT_WS('-', fname, lname, ...)
+
+
+# SUBSTRING / SUBSTR (index starts from 1)
+
+SELECT SUBSTRING('Hey Buddy', 1, 4);
+
+
+# REPLACE
+
+REPLACE(str, from_str, to_str)
+REPLACE('Hey Buddy', 'Hey', 'Hello')
+
+SELECT REPLACE(dept, 'IT', 'Tech') FROM employees;
+
+
+# REVERSE
+
+SELECT REVERSE('Hello World')
+
+
+# LENGTH
+
+SELECT LENGTH('Hello World')
+
+
+# UPPER and LOWER
+
+SELECT UPPER('Hello')
+SELECT LOWER('Hello')
+
+
+# LEFT and RIGHT
+
+SELECT LEFT('Abcdefghij', 3)
+
+SELECT RIGHT('Abcdefghij', 4)
+
+
+# TRIM
+
+SELECT TRIM('  Alright!  ')
+
+
+# POSITION
+
+SELECT POSITION('OM' in 'Thomas')
+
+
+## EXERCISES
+
+# Task 1
+
+1:Raj:Sharma:IT
+
+SELECT CONCAT_WS(':', emp_id, fname, lname, dept)
+FROM employees LIMIT 1;
+
+
+# Task 2
+
+1:Raju Sharma:IT:50000
+
+SELECT CONCAT_WS(':', emp_id, REPLACE(CONCAT_WS(' ', fname, lname), fname, 'Raju'), dept, salary) FROM employees LIMIT 1;
+
+
+# Task 3
+
+4:Suman:FINANCE
+
+SELECT CONCAT_WS(':', emp_id, fname, UPPER(dept)) FROM employees WHERE emp_id = 4;
+
+
+# Task 4
+
+I1 Raju
+H2 Priya
+
+SELECT CONCAT(LEFT(dept, 1), emp_id), fname FROM employees;
+
+
+## Exercises (DISTINCT, ORDER BY, LIKE, LIMIT)
+
+# 1. Find different type of departments in database
+
+SELECT DISTINCT(dept) FROM employees;
+
+
+# 2. Display records with High-low salary
+
+SELECT * FROM employees ORDER BY salary DESC;
+
+
+# 3. How to see only top 3 records from a table
+
+SELECT * FROM employees LIMIT 3;
+
+
+# 4. Show records where first name start with letter 'A'
+
+SELECT * FROM employees WHERE fname LIKE 'A%';
+
+
+# 5. Show records where length of the lname is 4 characters
+
+SELECT * FROM employees WHERE LENGTH(lname) = 4;
+
+
+## Exercises (COUNT, GROUP BY, MIN, MAX, SUM, AVG)
+
+# 1. Find total number of employees in database
+
+SELECT COUNT(emp_id) AS Total FROM employees;
+
+
+# 2. Find number of employees in each department
+
+SELECT dept, COUNT(emp_id) FROM employees GROUP BY dept;
+
+
+# 3. Find lowest salary paying
+
+SELECT MIN(salary) FROM employees;
+
+
+# 4. Find highest salary paying (Subquery)
+
+SELECT MAX(salary) FROM employees;
+
+SELECT * FROM employees ORDER BY salary DESC LIMIT 1;
+
+SELECT * FROM employees
+WHERE salary = (SELECT MAX(salary) FROM employees);
+
+# 5. Find total salary paying in Loan department
+
+SELECT SUM(salary) FROM employees WHERE dept = 'Finance';
+
+# 6. Average salary paying in each department
+
+SELECT dept, AVG(salary) FROM employees
+GROUP BY dept;
+
+
+## ALTER Query
+
+# How to add or remove a column?
+
+ALTER TABLE contacts
+ADD COLUMN city VARCHAR(50);
+
+ALTER TABLE contacts
+DROP COLUMN city;
+
+
+# How to rename a column or table name?
+
+ALTER TABLE contacts
+RENAME COLUMN name to full_name;
+
+ALTER TABLE contacts
+RENAME TO mycontacts;
+
+RENAME TABLE contacts TO mycontacts;
+
+
+# How to modify a column?
+
+Ex: Changing datatype or adding Default values etc
+
+ALTER TABLE person
+ALTER COLUMN fname
+SET DATA TYPE VARCHAR(200);
+
+# How to set DEFAULT value?
+
+ALTER TABLE person
+ALTER COLUMN fname
+SET DEFAULT 'unknown';
+
+ALTER TABLE person
+ALTER COLUMN fname
+DrOP DEFAULT;
+
+# How to set NOT NULL?
+
+ALTER TABLE person
+ALTER COLUMN fname
+SET NOT NULL;
