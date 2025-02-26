@@ -610,3 +610,31 @@ CREATE TABLE contacts(
     mob VARCHAR(15) UNIQUE,
     CONSTRAINT mob_no_less_than_10digits CHECK (LENGTH(mob) >= 10)
 );
+
+
+## Expression CASE
+
+SELECT fname, salary,
+CASE
+    WHEN salary >= 50000 THEN 'High'
+    ELSE 'Low'
+END AS sal_cat
+FROM employees;
+
+
+SELECT fname, salary,
+CASE
+WHEN salary > 0 THEN ROUND(salary*0.1)
+END AS bonus
+FROM employees;
+
+
+SELECT
+CASE
+    WHEN salary > 55000 THEN 'High'
+    WHEN salary BETWEEN 48000 AND 55000 THEN 'Mid'
+    ELSE 'Low'
+END AS sal_cat,
+COUNT(emp_id)
+FROM employees
+GROUP BY sal_cat;
