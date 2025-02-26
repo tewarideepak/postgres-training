@@ -638,3 +638,53 @@ END AS sal_cat,
 COUNT(emp_id)
 FROM employees
 GROUP BY sal_cat;
+
+
+## RELATIONSHIP
+
+# one to one
+
+# one to many
+
+# many to many
+
+
+## Foreign Key
+
+A foreign key is a column (or a set of columns) in a database table that establishes a relationship between two tables. It refers to the primary key in another table, ensuring data integrity by enforcing referential constraints.
+
+Key Points:
+
+- Ensures Referential Integrity: Prevents actions that would break the relationship between tables (e.g., deleting a referenced record).
+- Establishes Relationships: Links tables together in one-to-many or many-to-many relationships.
+- Prevents Invalid Data: A foreign key can only contain values that exist in the referenced primary key column.
+
+# Customers:
+
+CREATE TABLE customers(
+    cust_id SERIAL PRIMARY KEY,
+    cust_name VARCHAR(100) NOT NULL
+);
+
+INSERT INTO customers(cust_name)
+VALUES
+('Raju'),('Shyam'),('Paul'),('Alex');
+
+# Orders:
+
+CREATE TABLE orders(
+    ord_id SERIAL PRIMARY KEY,
+    ord_date DATE NOT NULL,
+    price NUMERIC NOT NULL,
+    cust_id INTEGER NOT NULL,
+    FOREIGN KEY (cust_id) REFERENCES
+    customers(cust_id)
+);
+
+INSERT INTO orders (ord_date, cust_id, price)
+VALUES
+('2024-01-01', 1, 250.00),
+('2024-01-15', 1, 300.00),
+('2024-02-01', 2, 150.00),
+('2024-03-01', 3, 450.00),
+('2024-04-04', 2, 550.00);
