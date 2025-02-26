@@ -582,3 +582,31 @@ DrOP DEFAULT;
 ALTER TABLE person
 ALTER COLUMN fname
 SET NOT NULL;
+
+
+## CHECK constraint
+
+CREATE TABLE contacts(
+    name VARCHAR(50),
+    mob VARCHAR(15) UNIQUE CHECK (LENGTH(mob) >= 10)
+);
+
+ALTER TABLE person
+ADD COLUMN
+    mob VARCHAR(15)
+        CHECK (LENGTH(mob) >= 10);
+
+
+ALTER TABLE contacts
+DROP CONSTRAINT mob_no_less_than_10digits;
+
+ALTER TABLE contacts
+ADD CONSTRAINT mob_not_null CHECK (mob != null);
+
+# NAMED Constraint
+
+CREATE TABLE contacts(
+    name VARCHAR(50),
+    mob VARCHAR(15) UNIQUE,
+    CONSTRAINT mob_no_less_than_10digits CHECK (LENGTH(mob) >= 10)
+);
