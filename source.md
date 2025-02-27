@@ -688,3 +688,112 @@ VALUES
 ('2024-02-01', 2, 150.00),
 ('2024-03-01', 3, 450.00),
 ('2024-04-04', 2, 550.00);
+
+
+## JOINS
+
+JOIN operation is used to combine rows from two or more tables based on a related column between them.
+
+# Types of Join
+
+# Cross Join
+
+Every row from one table is combined with every row from another table.
+
+SELECT * FROM customers CROSS JOIN orders;
+
+
+# Inner Join
+
+Returns only the rows where there is a match between the specified columns in both the left (or first) and right (or second) tables.
+
+SELECT * FROM Customers AS c
+INNER JOIN
+orders AS o
+ON c.cust_id = o.cust_id;
+
+SELECT c.cust_name, COUNT(o.ord_id)
+FROM customers as c
+INNER JOIN orders as o
+ON o.cust_id = c.cust_id
+GROUP BY c.cust_name;
+
+
+# Left Join
+
+Returns all rows from the left (or first) table and the matching rows from the right (or second) table.
+
+SELECT * FROM Customers AS c
+LEFT JOIN
+orders AS o
+ON c.cust_id = o.cust_id;
+
+
+# Right Join
+
+Returns all rows from the right (or second) table and the matching rows from the left (or first) table.
+
+SELECT * FROM Customers AS c
+RIGHT JOIN
+orders AS o
+ON c.cust_id = o.cust_id;
+
+
+## MANY - MANY Relationship
+
+CREATE DATABASE institute;
+
+# Students:
+
+CREATE TABLE students(
+    s_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+
+INSERT INTO students(name) VALUES
+('Raju'),
+('Shyam'),
+('Alex');
+
+
+# Courses:
+
+CREATE TABLE courses(
+    c_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    fee NUMERIC NOT NULL
+);
+
+INSERT INTO courses(name, fee)
+VALUES
+('Maths', 500.00),
+('Physics', 600.00),
+('Chemistry', 700.00);
+
+
+# Enrollment:
+
+CREATE TABLE enrollment(
+    enrollment_id SERIAL PRIMARY KEY,
+    s_id INT NOT NULL,
+    c_id INT NOT NULL,
+    enrollment_date DATE NOT NULL,
+    FOREIGN KEY (s_id) REFERENCES students(s_id),
+    FOREIGN KEY (c_id) REFERENCES courses(c_id)
+);
+
+INSERT INTO enrollment(s_id, c_id, enrollment_date)
+VALUES
+(1, 1, '2024-01-01'), -- Raju enrolled in Mathematics
+(1, 2, '2024-01-15'), -- Raju enrolled in Physics
+(2, 1, '2024-02-01'), -- Shyam enrolled in Mathematics
+(2, 3, '2024-02-15'), -- Shyam enrolled in Chemistry
+(3, 3, '2024-03-25'); -- Alex enrolled in Chemistry
+
+
+SELECT s.name, c.name, e.enrollment_date, c.fee
+FROM enrollment as e
+JOIN students as s
+ON e.s_id = s.s_id
+JOIN courses as c
+ON c.c_id = e.c_id;
