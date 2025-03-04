@@ -999,3 +999,21 @@ SELECT * FROM billing_info;
 # Removing a View
 
 DROP VIEW billing_info;
+
+
+# HAVING Clause
+
+SELECT p_name, SUM(total_price)
+FROM billing_info
+GROUP BY p_name
+HAVING SUM(total_price) > 1500;
+
+
+# GROUP BY ROLLUP
+
+SELECT
+    COALESCE(p_name, 'Total'),  -- If p_name is null
+    SUM(total_price) AS amount
+FROM billing_info
+    GROUP BY
+    ROLLUP(p_name) ORDER BY amount;
