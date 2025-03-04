@@ -1017,3 +1017,66 @@ SELECT
 FROM billing_info
     GROUP BY
     ROLLUP(p_name) ORDER BY amount;
+
+
+
+# STORED Routine
+
+An SQL statement or a set of SQL statement that can be stored on database server which can be call no. of times.
+
+
+# Types of STORED Routine
+
+- STORED Procedure
+- User defined functions
+
+
+# STORED Procedure
+
+Set of SQL statements and procedural logic that can perform operations such as inserting, updating, deleting, and querying data.
+
+
+- Using bank_db
+
+SELECT * FROM employees;
+
+
+CREATE OR REPLACE PROCEDURE procedure_name (parameter_name parameter_type, ...)
+LANGUAGE plpgsql    -- Procedural Language for psql
+AS $$       -- For changing delimiter
+BEGIN
+    -- procedural code here
+END;
+$$;
+
+
+CREATE OR REPLACE PROCEDURE update_emp_salary(
+    p_employee_id INT,
+    p_new_salary NUMERIC
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE employees
+    SET salary = p_new_salary
+    WHERE emp_id = p_employee_id;
+END;
+$$;
+
+
+CALL update_emp_salary(3, 71000);
+
+
+CREATE OR REPLACE PROCEDURE add_employee(
+    p_fname VARCHAR,
+    p_lname VARCHAR,
+    p_email VARCHAR,
+    p_dept VARCHAR,
+    p_salary NUMERIC
+)
+LANGUAGE plpgsqlAS $$
+BEGIN
+    INSERT INTO employees(fname, lname, email, dept, salary)
+    VALUES(p_fname, p_lname, p_email, p_dept, p_salary);
+END;
+$$;
