@@ -644,10 +644,66 @@ GROUP BY sal_cat;
 
 # one to one
 
+Each record in Table A is related to only one record in Table B, and vice versa.
+
+Example:
+
+A Users table and a UserProfiles table where each user has only one profile.
+
+CREATE TABLE Users (
+    user_id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE UserProfiles (
+    profile_id INT PRIMARY KEY,
+    user_id INT UNIQUE,  -- Ensures one-to-one relationship
+    bio TEXT,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+);
+
 # one to many
+
+Each record in Table A can be related to multiple records in Table B, but each record in Table B is related to only one record in Table A.
+Example:
+
+A Customers table and an Orders table where each customer can place multiple orders.
+
+CREATE TABLE Customers (
+    customer_id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Orders (
+    order_id INT PRIMARY KEY,
+    customer_id INT,
+    order_date DATE,
+    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id) ON DELETE CASCADE
+);
 
 # many to many
 
+A Students table and a Courses table where each student can enroll in multiple courses, and each course can have multiple students.
+
+CREATE TABLE Students (
+    student_id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Courses (
+    course_id INT PRIMARY KEY,
+    course_name VARCHAR(100) NOT NULL
+);
+
+-- Junction Table (Enrollment)
+CREATE TABLE Enrollments (
+    student_id INT,
+    course_id INT,
+    enrollment_date DATE,
+    PRIMARY KEY (student_id, course_id),
+    FOREIGN KEY (student_id) REFERENCES Students(student_id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES Courses(course_id) ON DELETE CASCADE
+);
 
 ## Foreign Key
 
@@ -797,3 +853,116 @@ JOIN students as s
 ON e.s_id = s.s_id
 JOIN courses as c
 ON c.c_id = e.c_id;
+
+
+# Project of E-Store
+
+Create a one-to-many and many-to-many relationship in a shopping store context using four tables:
+
+- customers
+- orders
+- products
+- order_items
+
+Include a price column in the products table and display the relationship between customers and their orders along with the details of the products in each order.
+
+
+# Task - StoreDB
+
+## customers
+
+CREATE TABLE customers(
+    cust_id SERIAL PRIMARY KEY,
+    cust_name VARCHAR(100) NOT NULL
+);
+
+
+INSERT INTO customers (cust_name)
+VALUES
+    ('Raju'), ('Sham'), ('Paul'), ('Alex');
+
+
+## orders
+
+CREATE TABLE orders(
+    ord_id SERIAL PRIMARY KEY,
+    ord_date DATE NOT NULL,
+    cust_id INTEGER NOT NULL,
+    FOREIGN KEY (cust_id) REFERENCES customers (cust_id)
+);
+
+
+INSERT INTO orders (ord_date, cust_id)
+VALUES
+    ('2024-01-01', 1),  -- Raju first order
+    ('2024-02-01', 2),  -- Sham first order
+    ('2024-03-01', 3),  -- Paul first order
+    ('2024-04-04', 2);  -- Sham second order
+
+
+## products
+
+CREATE TABLE products (
+    p_id SERIAL PRIMARY KEY,
+    p_name VARCHAR(100) NOT NULL,
+    price NUMERIC NOT NULL
+);
+
+
+INSERT INTO products (p_name, price)
+VALUES
+    ('Laptop', 55000.00),
+    ('Mouse', 500),
+    ('Keyboard', 800.00),
+    ('Cable', 250.00)
+;
+
+
+## order_items
+
+CREATE TABLE order_items (
+    item_id SERIAL PRIMARY KEY,
+    ord_id INTEGER NOT NULL,
+    p_id INTEGER NOT NULL,
+    quantity INTEGER NOT NULL,
+    FOREIGN KEY (ord_id) REFERENCES orders(ord_id),
+    FOREIGN KEY (p_id) REFERENCES products(p_id)
+);
+
+
+INSERT INTO order_items (ord_id, p_id, quantity)
+VALUES
+    (1, 1, 1),  -- Raju ordered 1 Laptop
+    (1, 4, 2),  -- Raju ordered 2 Cables
+    (2, 1, 1),  -- Sham ordered 1 Laptop
+    (3, 2, 1),  -- Paul ordered 1 Mouse
+    (3, 4, 5),  -- Paul ordered 5 Cables
+    (4, 3, 1);  -- Sham ordered 1 Keyboard
+
+
+SELECT 
+	c.cust_name,
+	o.ord_date,
+	p.p_name,
+	p.price,
+	oi.quantity,
+	(oi.quantity*p.price) AS total_price
+FROM order_items oi
+	JOIN
+		products p ON oi.p_id=p.p_id
+	JOIN
+		orders o ON o.ord_id=oi.ord_id
+	JOIN
+		customers c ON o.cust_id=c.cust_id;
+
+
+# Listing tables
+
+\dt
+
+
+# Listing specific table
+
+\d <table_name>
+
+
