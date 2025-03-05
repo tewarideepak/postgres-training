@@ -1067,16 +1067,67 @@ $$;
 CALL update_emp_salary(3, 71000);
 
 
-CREATE OR REPLACE PROCEDURE add_employee(
-    p_fname VARCHAR,
-    p_lname VARCHAR,
-    p_email VARCHAR,
-    p_dept VARCHAR,
-    p_salary NUMERIC
-)
-LANGUAGE plpgsqlAS $$
+    CREATE OR REPLACE PROCEDURE add_employee(
+        p_fname VARCHAR,
+        p_lname VARCHAR,
+        p_email VARCHAR,
+        p_dept VARCHAR,
+        p_salary NUMERIC
+    )
+    LANGUAGE plpgsqlAS $$
+    BEGIN
+        INSERT INTO employees(fname, lname, email, dept, salary)
+        VALUES(p_fname, p_lname, p_email, p_dept, p_salary);
+    END;
+    $$;
+
+
+# User Defined Functions
+
+Custom function created by the user to perform specific operations and return a value.
+
+    CREATE OR REPLACE FUNCTION function_name(parameters)
+    RETURNS return_type AS $$
+    BEGIN
+        -- Function body (SQL statements)
+        RETURN some_value;  -- For scalar functions (returns a single value)
+    END;
+    $$ LANGUAGE plpgsql;
+
+
+## Find name of the employees in each department having maximum salary.
+
+- Using Subquery:
+
+SELECT e.emp_id, e.fname, e.salary
+FROM employees e
+WHERE e.dept = 'HR'
+AND e.salary = (
+    SELECT MAX(emp.salary) FROM employees
+    WHERE emp.dept = 'HR'
+);
+
+
+- Using User defined function
+
+CREATE OR REPLACE FUNCTION dept_max_sal_emp1(dept_name VARCHAR)
+RETURNS TABLE(emp_id INT, fname VARCHAR, salary NUMERIC)
+AS $$
 BEGIN
-    INSERT INTO employees(fname, lname, email, dept, salary)
-    VALUES(p_fname, p_lname, p_email, p_dept, p_salary);
-END;
-$$;
+    RETURN QUERY
+    SELECT
+        e.emp_id, e.fname, e.salary
+    FROM
+        employees e
+    WHERE
+        e.dept = dept_name
+    AND e.salary = (
+        SELECT MAX(emp.salary)
+        FROM employees emp
+        WHERE emp.dept = dept_name
+    );
+END
+$$ LANGUAGE plpgsql;
+
+
+SELECT * FROM dept_max_sal_emp1('HR');
