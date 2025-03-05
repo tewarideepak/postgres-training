@@ -1110,24 +1110,97 @@ AND e.salary = (
 
 - Using User defined function
 
-CREATE OR REPLACE FUNCTION dept_max_sal_emp1(dept_name VARCHAR)
-RETURNS TABLE(emp_id INT, fname VARCHAR, salary NUMERIC)
-AS $$
-BEGIN
-    RETURN QUERY
-    SELECT
-        e.emp_id, e.fname, e.salary
-    FROM
-        employees e
-    WHERE
-        e.dept = dept_name
-    AND e.salary = (
-        SELECT MAX(emp.salary)
-        FROM employees emp
-        WHERE emp.dept = dept_name
-    );
-END
-$$ LANGUAGE plpgsql;
+    CREATE OR REPLACE FUNCTION dept_max_sal_emp1(dept_name VARCHAR)
+    RETURNS TABLE(emp_id INT, fname VARCHAR, salary NUMERIC)
+    AS $$
+    BEGIN
+        RETURN QUERY
+        SELECT
+            e.emp_id, e.fname, e.salary
+        FROM
+            employees e
+        WHERE
+            e.dept = dept_name
+        AND e.salary = (
+            SELECT MAX(emp.salary)
+            FROM employees emp
+            WHERE emp.dept = dept_name
+        );
+    END
+    $$ LANGUAGE plpgsql;
 
 
 SELECT * FROM dept_max_sal_emp1('HR');
+
+
+# What are Windows Function
+
+Also known as analytic functions allow you to perform calculations across a set of rows related to the current row.
+
+Defined an an OVER() clause.
+
+
+SELECT fname, salary,
+    SUM(salary) OVER(ORDER BY salary)
+    FROM employees;
+
+SELECT fname, salary,
+    AVG(salary) OVER(ORDER BY salary)
+    FROM employees;
+
+
+# Benefits of Window functions
+
+- Advanced analytics: They enable complex calculations like running totals, moving averages, rank calculations, and cumulative distributions.
+
+- Non-Aggregating: Unlike aggregate functions, window functions do not collapse rows. This means you can calculate aggregates while retaining individual row details.
+
+- Flexibility: They can be used in various clauses of SQL, such as SELECT, ORDER BY, and HAVING, providing a lot of flexibility in writing queries.
+
+
+- ROW_NUMBER()
+
+SELECT
+    ROW_NUMBER() OVER(ORDER BY fname),
+    fname, dept, salary
+    FROM employees;
+
+
+SELECT
+    ROW_NUMBER() OVER(PARTITION BY dept),  -- Similar to GROUP BY
+    fname, dept, salary
+    FROM employees;
+
+- RANK()
+
+SELECT
+    fname, salary,
+    RANK() OVER(ORDER BY salary DESC)
+    FROM employees;
+
+- DENSE_RANK()
+
+SELECT
+    fname, salary,
+    RANK() OVER(ORDER BY salary DESC)
+    FROM employees;
+
+- LAG()
+
+SELECT
+    fname, salary,
+    LAG(salary) OVER()
+    FROM employees;
+
+- LEAD()
+
+SELECT
+    fname, salary,
+    LEAD(salary) OVER()
+    FROM employees;
+
+
+SELECT
+    fname, salary,
+    (salary - LEAD(salary) OVER(ORDER BY salary DESC))
+    FROM employees;
